@@ -12,7 +12,7 @@
 
  1) Include <script src="./sms_provider.js"></script> in your test.
  2) Set expectations
-  await expect(getNextMessage).andReturn((timeout) => {
+  await expect(receive).andReturn((timeout) => {
     // mock behavior
   })
  3) Call new SMSReceiver().start();
@@ -24,7 +24,7 @@
  Here are the symbols that are exposed to tests that need to be implemented
  per engine:
 
- - function getNextMessage(): the main/only function that can be mocked.
+ - function receive(): the main/only function that can be mocked.
  - function expect(): the main/only function that enables us to mock it.
  - enum State {kSuccess, kTimeout}: allows you to mock success/failures.
 
@@ -34,12 +34,10 @@
 'use strict';
 
 promise_test(async t => {
-  await expect(getNextMessage).andReturn((timeout) => {
+  await expect(receive).andReturn((timeout) => {
       return Promise.resolve({
-        sms: {
-          content: "hello",
-          status: Status.kSuccess,
-        }
+        status: Status.kSuccess,
+        message: "hello",
       });
   });
 
@@ -56,12 +54,10 @@ promise_test(async t => {
 }, 'Basic usage');
 
 promise_test(async t => {
-  await expect(getNextMessage).andReturn((timeout) => {
+  await expect(receive).andReturn((timeout) => {
       return Promise.resolve({
-        sms: {
-          content: "",
-          status: Status.kTimeout,
-        }
+        status: Status.kTimeout,
+        message: "",
       });
   });
 
