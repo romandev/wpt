@@ -1,9 +1,10 @@
-// GENERATED CONTENT - DO NOT EDIT
+// GENERATED CONTENT
 // Content was automatically extracted by Reffy into reffy-reports
 // (https://github.com/tidoust/reffy-reports)
 // Source: Web Background Synchronization (https://wicg.github.io/BackgroundSync/spec/)
 
 partial interface ServiceWorkerRegistration {
+  [RuntimeEnabled=PeriodicBackgroundSync] readonly attribute PeriodicSyncManager periodicSync;
   readonly attribute SyncManager sync;
 };
 
@@ -14,6 +15,7 @@ interface SyncManager {
 };
 
 partial interface ServiceWorkerGlobalScope {
+  [RuntimeEnabled=PeriodicBackgroundSync] attribute EventHandler onperiodicsync;
   attribute EventHandler onsync;
 };
 
@@ -27,3 +29,27 @@ dictionary SyncEventInit : ExtendableEventInit {
   required DOMString tag;
   boolean lastChance = false;
 };
+
+dictionary BackgroundSyncOptions {
+  [EnforceRange] unsigned long long minInterval = 0;
+};
+
+dictionary PeriodicSyncEventInit : ExtendableEventInit {
+  required DOMString tag;
+};
+
+[
+  Constructor(DOMString type, PeriodicSyncEventInit init),
+  Exposed=ServiceWorker,
+  RuntimeEnabled=PeriodicBackgroundSync
+] interface PeriodicSyncEvent : ExtendableEvent {
+    readonly attribute DOMString tag;
+};
+
+[
+  Exposed=(Window,Worker),
+  RuntimeEnabled=PeriodicBackgroundSync
+] interface PeriodicSyncManager {
+  Promise<void> register(DOMString tag, optional BackgroundSyncOptions options);
+};
+
