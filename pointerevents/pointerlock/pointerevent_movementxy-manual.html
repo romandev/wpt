@@ -45,10 +45,35 @@
                 lastScreenY = 0;
             }
 
+            var nonPointermoveEventList = [
+                  "pointerover",
+                  "pointerenter",
+                  "pointerdown",
+                  "pointerup",
+                  "pointerout",
+                  "pointerleave",
+                  "gotpointercapture",
+                  "lostpointercapture"];
+
             function run() {
                 var test_pointerEvent = setup_pointerevent_test("pointerevent attributes", ['mouse', 'touch']);
 
                 [document, document.getElementById('innerFrame').contentDocument].forEach(function(element) {
+                  nonPointermoveEventList.forEach(function(eventName) {
+                    on_event(element, eventName, function (event) {
+                      if (startSummation) {
+                        test_pointerEvent.step(function() {
+                          assert_equals(event.movementX, 0, "movementX should be 0 for event other than pointermove.");
+                          assert_equals(event.movementY, 0, "movementY should be 0 for event other than pointermove.");
+                        });
+                        if (event.type == "pointerenter") {
+                          lastScreenX = event.screenX;
+                          lastScreenY = event.screenY;
+                        }
+                      }
+                    });
+                  });
+
                   on_event(element, 'pointermove', function (event) {
                     if (startSummation) {
                       test_pointerEvent.step(function() {
