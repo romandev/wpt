@@ -31,8 +31,8 @@ for (let crossOriginTest of crossOriginTests) {
     await imgWatcher.wait_for("load");
     const detector = crossOriginTest.createDetector();
     promise_rejects(t, "SecurityError", detector.detect(img));
-  }, crossOriginTest.detectorType
-  + " should reject cross-origin HTMLImageElements with a SecurityError.");
+  }, `${crossOriginTest.detectorType} should reject cross-origin\
+ HTMLImageElements with a SecurityError.`);
 
   // Verifies that Detector rejects a cross-origin ImageBitmap.
   promise_test(async t => {
@@ -43,8 +43,8 @@ for (let crossOriginTest of crossOriginTests) {
     const imgBitmap = await createImageBitmap(img);
     const detector = crossOriginTest.createDetector();
     promise_rejects(t, "SecurityError", detector.detect(imgBitmap));
-  }, crossOriginTest.detectorType
-  + " should reject cross-origin ImageBitmaps with a SecurityError.");
+  }, `${crossOriginTest.detectorType} should reject cross-origin\
+ ImageBitmaps with a SecurityError.`);
 
   // Verifies that Detector rejects a cross-origin HTMLVideoElement.
   promise_test(async t => {
@@ -54,8 +54,21 @@ for (let crossOriginTest of crossOriginTests) {
     await videoWatcher.wait_for("loadeddata");
     const detector = crossOriginTest.createDetector();
     promise_rejects(t, "SecurityError", detector.detect(video));
-  }, crossOriginTest.detectorType
-  + " should reject cross-origin HTMLVideoElements with a SecurityError.");
+  }, `${crossOriginTest.detectorType} should reject cross-origin\
+ HTMLVideoElements with a SecurityError.`);
+
+  // Verifies that Detector rejects a cross-origin HTMLCanvasElement.
+  promise_test(async t => {
+    const img = new Image();
+    const imgWatcher = new EventWatcher(t, img, ["load", "error"]);
+    img.src = IMAGE_URL;
+    await imgWatcher.wait_for("load");
+    const canvas = document.createElement("canvas");
+    canvas.getContext("2d").drawImage(img, 0, 0);
+    const detector = crossOriginTest.createDetector();
+    promise_rejects(t, "SecurityError", detector.detect(canvas));
+  }, `${crossOriginTest.detectorType} should reject cross-origin\
+ HTMLCanvasElement with a SecurityError.`);
 
 }
 
